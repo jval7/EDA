@@ -79,9 +79,9 @@ poetry install
 
 Para remover una librería de tu proyecto:
     
-    ```bash
+```bash
     poetry remove <nombre-de-la-libreria>
-    ``` 
+``` 
 
 
 
