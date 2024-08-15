@@ -8,7 +8,7 @@ services:
     container_name: message-broker
     environment:
       - POETRY_VIRTUALENVS_CREATE=false
-    command: uvicorn broker_original:app --host 0.0.0.0 --port 8000
+    command: uvicorn broker:app --host 0.0.0.0 --port 8000
     ports:
       - "8000:8000"
 
@@ -20,7 +20,7 @@ services:
     environment:
       - POETRY_VIRTUALENVS_CREATE=false
       - BROKER_URL=http://message-broker:8000/produce/
-    command: uvicorn publisher_original:app --host 0.0.0.0 --port 8001
+    command: uvicorn publisher:app --host 0.0.0.0 --port 8001
     depends_on:
       - broker
     ports:
@@ -35,7 +35,7 @@ services:
       - POETRY_VIRTUALENVS_CREATE=false
       - BROKER_URL=http://message-broker:8000
       - TOPIC=tasks
-    command: uvicorn consumer_original:app --host 0.0.0.0 --port 8002
+    command: uvicorn consumer:app --host 0.0.0.0 --port 8002
     depends_on:
       - broker
     ports:
