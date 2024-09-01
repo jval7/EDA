@@ -1,7 +1,8 @@
 from fastapi import FastAPI, HTTPException
 import requests
 import os
-
+import time
+import threading
 app = FastAPI()
 
 BROKER_URL = os.getenv("BROKER_URL", "http://127.0.0.1:8000")
@@ -10,6 +11,7 @@ TOPIC = os.getenv("TOPIC", "tasks")
 
 def consume_message():
     try:
+        print("Attempting to consume message...")
         response = requests.get(f"{BROKER_URL}/consume/{TOPIC}")
         response.raise_for_status()  # Verifica si ocurrió un error HTTP
         message = response.json()
@@ -38,8 +40,17 @@ async def trigger_consume():
         raise HTTPException(status_code=500, detail=result["detail"])
     return result
 
+def start_consumer():
+    while True:
+        print("Consumer running...")
+        consume_message()
+        time.sleep(60)
+
 
 if __name__ == "__main__":
     import uvicorn
+
+    consume_thread = threading.Thread(target=start_consumer, daemon=True)
+    consume_thread.start()
 
     uvicorn.run(app, host="0.0.0.0", port=8002)
